@@ -1,11 +1,12 @@
 ---
-description: "Kotlin hooks extending common rules"
-globs: ["**/*.kt", "**/*.kts", "**/build.gradle.kts"]
-alwaysApply: false
+paths:
+  - "**/*.kt"
+  - "**/*.kts"
+  - "**/build.gradle.kts"
 ---
 # Kotlin Hooks
 
-> This file extends the common hooks rule with Kotlin-specific content.
+> This file extends [common/hooks.md](../common/hooks.md) with Kotlin-specific content.
 
 ## PostToolUse Hooks
 

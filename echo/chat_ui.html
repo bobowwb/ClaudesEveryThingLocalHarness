@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>LTM Chat UI</title>
+<style>
+body{background:#0d1b2a;color:#cdd6f4;font-family:monospace;margin:0;padding:0}
+.container{max-width:900px;margin:0 auto;padding:16px}
+h1{color:#89b4fa}
+#chatBox{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px;min-height:200px;max-height:400px;overflow-y:auto;margin-bottom:8px;font-size:13px}
+.msg-user{color:#a6e3a1;margin:4px 0}
+.msg-assistant{color:#89dceb;margin:4px 0}
+#inputRow{display:flex;gap:8px;margin-bottom:12px}
+#userInput{flex:1;background:#1e1e2e;border:1px solid #313244;color:#cdd6f4;padding:8px;border-radius:6px;font-size:13px}
+#sendBtn{background:#89b4fa;color:#1e1e2e;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-weight:bold}
+.ltm-row{display:flex;gap:8px;margin-bottom:12px}
+.ltm-btn{background:#313244;color:#cdd6f4;border:1px solid #45475a;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px}
+#ltmPanel{background:#1e1e2e;border:1px solid #313244;border-radius:8px;padding:12px;min-height:40px;margin-bottom:12px;font-size:12px;display:none}
+.section-label{color:#89b4fa;font-size:11px;text-transform:uppercase;margin-bottom:6px}
+#dbfp{background:#0d1b2a;padding:14px;min-height:60px;font-size:12px;color:#adf;border:1px solid #1e3a5f;border-radius:6px}
+#statusBar{font-size:11px;color:#6c7086;margin-top:8px}
+</style></head>
+<body>
+<div class="container">
+<h1>LTM Chat UI</h1>
+<div id="chatBox"><div class="msg-assistant">Hello! Type a message.</div></div>
+<div id="inputRow">
+  <input id="userInput" type="text" placeholder="Type a message..."/>
+  <button id="sendBtn">Send</button>
+</div>
+<div class="ltm-row">
+  <button class="ltm-btn" id="ltmSaveBtn">Save LTM</button>
+  <button class="ltm-btn" id="ltmRecallBtn">Recall LTM</button>
+  <button class="ltm-btn" id="ltmTelemetryBtn">Send Telemetry</button>
+  <button class="ltm-btn" id="dragDbFpBtn" onclick="window.loadDbFootprint()">Drag DB Footprint</button>
+</div>
+<div id="ltmPanel"></div>
+<div class="section-label">DB Footprint (telemetry_events)</div>
+<div id="dbfp" style="background:#0d1b2a;padding:14px;min-height:60px;font-size:12px;color:#adf">No records.</div>
+<div id="statusBar">Ready.</div>
+</div>
+<script>
+console.log("[LTM-UI] script loading");
+var SID="sess-"+Math.random().toString(36).slice(2,10);
+var API="http://localhost:5000";
+console.log("[LTM-UI] SID="+SID);
+function log(m){console.log("[LTM-UI]",m);var sb=document.getElementById("statusBar");if(sb)sb.textContent=String(m);}
+async function apiPost(p,b){console.log("[LTM-UI] POST",p,b);var resp=await fetch(API+p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});if(!resp.ok){var e=new Error("HTTP "+resp.status+" "+p);console.error("[LTM-UI] POST error",e);throw e;}var d=await resp.json();console.log("[LTM-UI] POST resp",d);return d;}
+async function apiGet(p){console.log("[LTM-UI] GET",p);var resp=await fetch(API+p);if(!resp.ok){var e=new Error("HTTP "+resp.status+" "+p);console.error("[LTM-UI] GET error",e);throw e;}var d=await resp.json();console.log("[LTM-UI] GET resp rows="+(Array.isArray(d)?d.length:d));return d;}
+async function loadDbFootprint(){console.log("[LTM-UI] loadDbFootprint ENTRY");var el=document.getElementById("dbfp");if(!el){console.error("[LTM-UI] #dbfp NOT FOUND");return;}try{var rows=await apiGet("/api/db/telemetry");console.log("[LTM-UI] rows received:",rows?rows.length:0);if(!rows||rows.length===0){el.innerHTML="No records.";el.style.color="#f38ba8";log("WARNING: No telemetry DB records");}else{el.style.color="#adf";el.innerHTML=rows.slice(0,10).map(function(r){var txt="<div style='padding:3px 0;border-bottom:1px solid #1e3a5f'><b>"+String(r.event_type)+"</b> sid="+String(r.session_id).slice(0,10)+" otel="+r.otel_sent+" <small>"+String(r.created_at)+"</small></div>";console.log("[LTM-UI] row:",txt.slice(0,60));return txt;}).join("");log("DB footprint: "+rows.length+" records");}}catch(err){console.error("[LTM-UI] loadDbFootprint ERROR:",err);el.innerHTML="Error: "+err.message;el.style.color="#f38ba8";log("loadDbFootprint error: "+err.message);}}
+var refreshDbFp=loadDbFootprint;
+window.loadDbFootprint=loadDbFootprint;
+window.refreshDbFp=loadDbFootprint;
+console.log("[LTM-UI] window.loadDbFootprint SET");
+document.addEventListener("DOMContentLoaded",function(){
+  console.log("[LTM-UI] DOMContentLoaded binding handlers");
+  function bind(id,fn){var el=document.getElementById(id);if(el){el.onclick=fn;console.log("[LTM-UI] bound:",id);}else{console.error("[LTM-UI] MISSING element:",id);}}
+  bind("sendBtn",async function(){
+    console.log("[LTM-UI] sendBtn click");
+    var inp=document.getElementById("userInput"),msg=inp.value.trim();if(!msg)return;
+    var d=document.createElement("div");d.className="msg-user";d.textContent="You: "+msg;document.getElementById("chatBox").appendChild(d);inp.value="";
+    try{var r=await apiPost("/api/chat/message",{session_id:SID,role:"user",content:msg});var d2=document.createElement("div");d2.className="msg-assistant";d2.textContent="Assistant: (id="+r.id+")";document.getElementById("chatBox").appendChild(d2);}catch(e){log("chat err:"+e.message);}
+    await loadDbFootprint();
+  });
+  bind("ltmSaveBtn",async function(){
+    console.log("[LTM-UI] ltmSaveBtn click");
+    var msg=document.getElementById("userInput").value.trim()||("LTM "+new Date().toISOString());
+    try{var r=await apiPost("/api/ltm/save",{session_id:SID,content:msg});log("saved id="+r.id+" otel="+r.otel_sent);await apiPost("/api/ltm/send-telemetry",{session_id:SID,event:"ltm_save_btn_click",source:"ui_button"});}catch(e){log("ltmSave err:"+e.message);}
+    await loadDbFootprint();
+  });
+  bind("ltmRecallBtn",async function(){
+    console.log("[LTM-UI] ltmRecallBtn click");
+    try{var r=await apiGet("/api/ltm/recall?session_id="+SID);var p=document.getElementById("ltmPanel");p.style.display="block";p.innerHTML=(!r||!r.length)?"<em>No LTM.</em>":r.map(function(m){return "<div>"+String(m.created_at)+": "+String(m.content)+"</div>";}).join("");await apiPost("/api/ltm/send-telemetry",{session_id:SID,event:"ltm_recall_btn_click",source:"ui_button",count:r.length});log("recalled "+r.length);}catch(e){log("ltmRecall err:"+e.message);}
+    await loadDbFootprint();
+  });
+  bind("ltmTelemetryBtn",async function(){
+    console.log("[LTM-UI] ltmTelemetryBtn click");
+    try{var r=await apiPost("/api/ltm/send-telemetry",{session_id:SID,event:"manual_telemetry",source:"ui_button"});log("tel ok trace="+r.trace_id);}catch(e){log("tel err:"+e.message);}
+    await loadDbFootprint();
+  });
+  bind("dragDbFpBtn",async function(){
+    console.log("[LTM-UI] dragDbFpBtn CLICK - loadDbFootprint chain starting");
+    document.getElementById("dbfp").innerHTML="Loading...";document.getElementById("dbfp").style.color="#89b4fa";
+    try{var tr=await apiPost("/api/ltm/send-telemetry",{session_id:SID,event:"drag_db_footprint_click",source:"ui_button"});console.log("[LTM-UI] drag telemetry:",tr);log("tel ok trace="+tr.trace_id+" otel="+tr.otel_sent);}catch(e){console.error("[LTM-UI] drag tel err:",e);log("tel err:"+e.message);}
+    await loadDbFootprint();
+  });
+  console.log("[LTM-UI] all handlers bound, auto-loading footprint");
+  loadDbFootprint();
+});
+</script>
+</body>
+</html>

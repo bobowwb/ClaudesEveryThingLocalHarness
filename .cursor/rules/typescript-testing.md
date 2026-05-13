@@ -1,11 +1,13 @@
 ---
-description: "TypeScript testing extending common rules"
-globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
-alwaysApply: false
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
 ---
 # TypeScript/JavaScript Testing
 
-> This file extends the common testing rule with TypeScript/JavaScript specific content.
+> This file extends [common/testing.md](../common/testing.md) with TypeScript/JavaScript specific content.
 
 ## E2E Testing
 

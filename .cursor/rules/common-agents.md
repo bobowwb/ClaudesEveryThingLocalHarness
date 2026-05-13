@@ -1,7 +1,3 @@
----
-description: "Agent orchestration: available agents, parallel execution, multi-perspective analysis"
-alwaysApply: true
----
 # Agent Orchestration
 
 ## Available Agents
@@ -19,6 +15,7 @@ Located in `~/.claude/agents/`:
 | e2e-runner | E2E testing | Critical user flows |
 | refactor-cleaner | Dead code cleanup | Code maintenance |
 | doc-updater | Documentation | Updating docs |
+| rust-reviewer | Rust code review | Rust projects |
 
 ## Immediate Agent Usage
 

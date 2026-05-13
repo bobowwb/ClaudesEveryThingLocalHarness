@@ -1,11 +1,11 @@
 ---
-description: "Python patterns extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
-alwaysApply: false
+paths:
+  - "**/*.py"
+  - "**/*.pyi"
 ---
 # Python Patterns
 
-> This file extends the common patterns rule with Python specific content.
+> This file extends [common/patterns.md](../common/patterns.md) with Python specific content.
 
 ## Protocol (Duck Typing)
 

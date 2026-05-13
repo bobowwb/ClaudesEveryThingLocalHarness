@@ -1,11 +1,12 @@
 ---
-description: "Go security extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
-alwaysApply: false
+paths:
+  - "**/*.go"
+  - "**/go.mod"
+  - "**/go.sum"
 ---
 # Go Security
 
-> This file extends the common security rule with Go specific content.
+> This file extends [common/security.md](../common/security.md) with Go specific content.
 
 ## Secret Management
 

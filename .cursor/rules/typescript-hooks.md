@@ -1,11 +1,13 @@
 ---
-description: "TypeScript hooks extending common rules"
-globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
-alwaysApply: false
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
 ---
 # TypeScript/JavaScript Hooks
 
-> This file extends the common hooks rule with TypeScript/JavaScript specific content.
+> This file extends [common/hooks.md](../common/hooks.md) with TypeScript/JavaScript specific content.
 
 ## PostToolUse Hooks
 

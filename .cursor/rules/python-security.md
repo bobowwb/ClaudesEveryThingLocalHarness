@@ -1,11 +1,11 @@
 ---
-description: "Python security extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
-alwaysApply: false
+paths:
+  - "**/*.py"
+  - "**/*.pyi"
 ---
 # Python Security
 
-> This file extends the common security rule with Python specific content.
+> This file extends [common/security.md](../common/security.md) with Python specific content.
 
 ## Secret Management
 

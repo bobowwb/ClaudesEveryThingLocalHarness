@@ -1,11 +1,11 @@
 ---
-description: "Swift hooks extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
-alwaysApply: false
+paths:
+  - "**/*.swift"
+  - "**/Package.swift"
 ---
 # Swift Hooks
 
-> This file extends the common hooks rule with Swift specific content.
+> This file extends [common/hooks.md](../common/hooks.md) with Swift specific content.
 
 ## PostToolUse Hooks
 
@@ -17,4 +17,4 @@ Configure in `~/.claude/settings.json`:
 
 ## Warning
 
-Flag `print()` statements -- use `os.Logger` or structured logging instead for production code.
+Flag `print()` statements — use `os.Logger` or structured logging instead for production code.

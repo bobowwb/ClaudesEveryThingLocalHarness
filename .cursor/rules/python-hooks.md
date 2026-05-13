@@ -1,11 +1,11 @@
 ---
-description: "Python hooks extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
-alwaysApply: false
+paths:
+  - "**/*.py"
+  - "**/*.pyi"
 ---
 # Python Hooks
 
-> This file extends the common hooks rule with Python specific content.
+> This file extends [common/hooks.md](../common/hooks.md) with Python specific content.
 
 ## PostToolUse Hooks
 

@@ -1,7 +1,3 @@
----
-description: "Hooks system: types, auto-accept permissions, TodoWrite best practices"
-alwaysApply: true
----
 # Hooks System
 
 ## Hook Types

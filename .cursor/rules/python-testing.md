@@ -1,11 +1,11 @@
 ---
-description: "Python testing extending common rules"
-globs: ["**/*.py", "**/*.pyi"]
-alwaysApply: false
+paths:
+  - "**/*.py"
+  - "**/*.pyi"
 ---
 # Python Testing
 
-> This file extends the common testing rule with Python specific content.
+> This file extends [common/testing.md](../common/testing.md) with Python specific content.
 
 ## Framework
 

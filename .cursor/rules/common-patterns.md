@@ -1,7 +1,3 @@
----
-description: "Common patterns: repository, API response, skeleton projects"
-alwaysApply: true
----
 # Common Patterns
 
 ## Skeleton Projects

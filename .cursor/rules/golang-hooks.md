@@ -1,11 +1,12 @@
 ---
-description: "Go hooks extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
-alwaysApply: false
+paths:
+  - "**/*.go"
+  - "**/go.mod"
+  - "**/go.sum"
 ---
 # Go Hooks
 
-> This file extends the common hooks rule with Go specific content.
+> This file extends [common/hooks.md](../common/hooks.md) with Go specific content.
 
 ## PostToolUse Hooks
 

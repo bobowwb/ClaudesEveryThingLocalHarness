@@ -1,7 +1,3 @@
----
-description: "Git workflow: conventional commits, PR process"
-alwaysApply: true
----
 # Git Workflow
 
 ## Commit Message Format
@@ -25,4 +21,4 @@ When creating PRs:
 5. Push with `-u` flag if new branch
 
 > For the full development process (planning, TDD, code review) before git operations,
-> see the development workflow rule.
+> see [development-workflow.md](./development-workflow.md).

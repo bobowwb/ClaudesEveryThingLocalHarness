@@ -1,11 +1,12 @@
 ---
-description: "Go testing extending common rules"
-globs: ["**/*.go", "**/go.mod", "**/go.sum"]
-alwaysApply: false
+paths:
+  - "**/*.go"
+  - "**/go.mod"
+  - "**/go.sum"
 ---
 # Go Testing
 
-> This file extends the common testing rule with Go specific content.
+> This file extends [common/testing.md](../common/testing.md) with Go specific content.
 
 ## Framework
 

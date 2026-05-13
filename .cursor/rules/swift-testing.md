@@ -1,11 +1,11 @@
 ---
-description: "Swift testing extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
-alwaysApply: false
+paths:
+  - "**/*.swift"
+  - "**/Package.swift"
 ---
 # Swift Testing
 
-> This file extends the common testing rule with Swift specific content.
+> This file extends [common/testing.md](../common/testing.md) with Swift specific content.
 
 ## Framework
 
@@ -22,7 +22,7 @@ func userCreationValidatesEmail() throws {
 
 ## Test Isolation
 
-Each test gets a fresh instance -- set up in `init`, tear down in `deinit`. No shared mutable state between tests.
+Each test gets a fresh instance — set up in `init`, tear down in `deinit`. No shared mutable state between tests.
 
 ## Parameterized Tests
 

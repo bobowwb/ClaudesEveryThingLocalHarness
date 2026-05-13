@@ -1,11 +1,11 @@
 ---
-description: "Swift patterns extending common rules"
-globs: ["**/*.swift", "**/Package.swift"]
-alwaysApply: false
+paths:
+  - "**/*.swift"
+  - "**/Package.swift"
 ---
 # Swift Patterns
 
-> This file extends the common patterns rule with Swift specific content.
+> This file extends [common/patterns.md](../common/patterns.md) with Swift specific content.
 
 ## Protocol-Oriented Design
 
@@ -48,7 +48,7 @@ actor Cache<Key: Hashable & Sendable, Value: Sendable> {
 
 ## Dependency Injection
 
-Inject protocols with default parameters -- production uses defaults, tests inject mocks:
+Inject protocols with default parameters — production uses defaults, tests inject mocks:
 
 ```swift
 struct UserService {

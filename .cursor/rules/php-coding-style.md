@@ -1,11 +1,11 @@
 ---
-description: "PHP coding style extending common rules"
-globs: ["**/*.php", "**/composer.json"]
-alwaysApply: false
+paths:
+  - "**/*.php"
+  - "**/composer.json"
 ---
 # PHP Coding Style
 
-> This file extends the common coding style rule with PHP specific content.
+> This file extends [common/coding-style.md](../common/coding-style.md) with PHP specific content.
 
 ## Standards
 
@@ -23,3 +23,18 @@ alwaysApply: false
 
 - Use **PHP-CS-Fixer** or **Laravel Pint** for formatting.
 - Use **PHPStan** or **Psalm** for static analysis.
+- Keep Composer scripts checked in so the same commands run locally and in CI.
+
+## Imports
+
+- Add `use` statements for all referenced classes, interfaces, and traits.
+- Avoid relying on the global namespace unless the project explicitly prefers fully qualified names.
+
+## Error Handling
+
+- Throw exceptions for exceptional states; avoid returning `false`/`null` as hidden error channels in new code.
+- Convert framework/request input into validated DTOs before it reaches domain logic.
+
+## Reference
+
+See skill: `backend-patterns` for broader service/repository layering guidance.

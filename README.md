@@ -1434,3 +1434,8 @@ MIT - Use freely, modify as needed, contribute back if you can.
 ---
 
 **Star this repo if it helps. Read both guides. Build something great.**
+  Changed:
+
+  - .codex/config.toml: removed unsupported project-local warning causes, added fallback policy, increased slow MCP startup timeouts.
+  - scripts/vibe-harness.ps1: new non-destructive preflight for MAMGA, browser harnesses, Obsidian wiki, PlanDB, Evolver, Codex config.
+  - commands/vibe-harness.md: documents the command and shared evidence priority.

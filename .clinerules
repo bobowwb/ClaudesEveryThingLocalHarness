@@ -1,0 +1,456 @@
+# Cline Auto-Wired Rules — ECC Harness
+# Owner: Wenbo Wei (I075354, SAP)
+# Backend: Cline → Local Proxy → SAP AI Core → Anthropic Claude
+# Wiki: C:\AI\knowledge\ (68 pages, 195+ links)
+
+## ═══════════════════════════════════════════════════
+## HOOK 1: LONG-TERM MEMORY (MAMGA + continuous-learning-v2)
+## ═══════════════════════════════════════════════════
+## AUTO-TRIGGER: Every session start AND end
+## BEHAVIOR: Restore context on start → extract patterns on end
+
+### MAMGA Memory MCP (auto-wired — always use)
+At the START of EVERY session:
+1. Call `get_recent_memory` (mamga-memory MCP) → restore last session context
+2. Call `list_sessions` → show recent session IDs
+3. Report: "Memory restored: [N] recent memories loaded"
+
+During session — after completing any significant task:
+1. Call `store_memory` with what was learned/decided
+2. Include: project context, decisions made, patterns observed
+
+At the END of every session:
+1. Call `store_memory` with session summary
+2. Extract coding patterns → save as instincts to:
+   `C:\Users\I075354\.claude\homunculus\projects\<hash>\instincts\personal\`
+3. Report: "Session saved. Use /instinct-status to review."
+
+### Memory MCP Tools (mamga-memory server)
+- `store_memory`         → persist a learning/decision
+- `query_memory`         → search past memories by topic
+- `get_recent_memory`    → restore last N session memories
+- `get_session_summary`  → summarize a past session
+- `list_sessions`        → show all session IDs
+
+### Memory Commands (type in Cline chat)
+- `/learn`            → extract patterns from current session NOW
+- `/instinct-status`  → show learned instincts with confidence
+- `/evolve`           → cluster instincts into reusable skills
+- `/instinct-export`  → export memory backup
+
+### Memory Storage
+- MAMGA server:      http://localhost:7788 (check health first)
+- Project instincts: C:\Users\I075354\.claude\homunculus\projects\<hash>\instincts\
+- Global instincts:  C:\Users\I075354\.claude\homunculus\instincts\personal\
+
+## ═══════════════════════════════════════════════════
+## HOOK 2: SAP KNOWLEDGE WIKI (Obsidian vault — PRIMARY)
+## ═══════════════════════════════════════════════════
+## Vault: C:\AI\knowledge\  (68 pages, 195+ links)
+## Framework: C:\AI\obsidian-wiki\  (skills + agent protocol)
+## AUTO-TRIGGER: Any SAP/BTP/AppFND/Joule/AI Core question
+## BEHAVIOR: Query vault FIRST before answering
+
+### Obsidian Wiki Query Protocol (ALWAYS use for SAP topics)
+
+AUTOMATICALLY query the wiki when user asks about:
+- SAP topics: BTP, AppFND, Joule, AI Core, GenAI Hub, SAC, FP&A, HANA, XSUAA
+- Agent/harness: autoresearch, OpenHarness, MAGMA, ECC, obsidian-wiki
+- Development: Gerrit, Jenkins, Cloud Foundry, BTP CF deploy, XSUAA auth
+- Projects: appFnd-epm-fpa-agent, pws_agent, epm_fpa_agent
+- Research: VARMAX, GeomForest, FX forecast, MAGMA memory, SkillReducer
+
+### Step 1 — Cheap pass (always do first)
+```
+read_file C:\AI\knowledge\index.md
+```
+Scan titles and summaries. Most questions answered from index alone.
+
+### Step 2 — Open specific page if needed
+All pages have frontmatter with `summary:` field. Read summary FIRST.
+Categories: concepts/ | entities/ | skills/ | references/ | synthesis/ | journal/ | projects/
+
+### Step 3 — Follow wikilinks
+Links use typed format: `[[Page Name|LINK_TYPE]]`
+Types: LEADS_TO, BECAUSE_OF, ENABLES, PART_OF, RELATED_TO, REFERS_TO, PRECEDES, SUCCEEDS
+
+### Step 4 — Answer with citation
+- Synthesize from wiki content
+- Always cite: `[[page title]]` as source
+- Note gaps: what's missing and could be ingested
+
+### High-Value Wiki Pages (check these for SAP coding)
+| Page | Path | Key Content |
+|------|------|-------------|
+| `SAP Joule Enablement` | entities/ | A2A Protocol, ORD, BTP setup, dev guide |
+| `AppFND (Application Foundation)` | entities/ | Agent runtime, A2A SDK, toolkits, BYOA/BAF |
+| `appFnd EPM FPA Agent` | projects/ | KPI agent: pws_agent v1.14.0 + epm_fpa_agent v1.0.0 |
+| `AI Core` | entities/ | SAP AI Core LLM inference on BTP |
+| `GenAI Hub` | entities/ | Unified LLM API gateway (Claude, GPT-4) |
+| `MAGMA Memory Architecture` | entities/ | Multi-graph LTM: temporal+semantic+causal+entity |
+| `everything-claude-code` | entities/ | ECC harness: 47 agents, 181 skills, hooks |
+| `OpenHarness` | entities/ | Lightweight agent infra: 43+ tools, CLI: openh |
+| `autoresearch` | entities/ | COMPOSE CONSOLE, Karpathy autonomous research |
+| `Harness Engineering Dev Landscape Plan` | projects/ | Full harness architecture map |
+
+### Wiki Skills (read these for wiki operations)
+| Intent | Skill file |
+|--------|-----------|
+| Search/query wiki | `C:\AI\obsidian-wiki\.skills\wiki-query\SKILL.md` |
+| Add new knowledge | `C:\AI\obsidian-wiki\.skills\wiki-ingest\SKILL.md` |
+| Sync project → wiki | `C:\AI\obsidian-wiki\.skills\wiki-update\SKILL.md` |
+| Check wiki health | `C:\AI\obsidian-wiki\.skills\wiki-lint\SKILL.md` |
+| Ingest web page | `C:\AI\obsidian-wiki\.skills\browser-ingest\SKILL.md` |
+
+### Wiki Write Rules (when adding to wiki)
+Required frontmatter on every new page:
+```yaml
+---
+title: "Page Title"
+category: concepts | entities | skills | references | synthesis | journal | projects
+tags: [tag1, tag2]   # max 5, lowercase slash-hierarchy e.g. ai/llm, tools/sap
+summary: "One sentence, present tense."
+sources: ["url or file path"]
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+```
+After ANY write: update C:\AI\knowledge\.manifest.json + index.md + log.md
+
+## ═══════════════════════════════════════════════════
+## HOOK 2b: LIVE LIBRARY DOCS (Context7 MCP — for non-SAP libs)
+## ═══════════════════════════════════════════════════
+## AUTO-TRIGGER: When user asks about npm/pip packages, open-source frameworks
+## BEHAVIOR: Fetch live docs via Context7 (NOT for SAP — use wiki for SAP)
+
+Use Context7 MCP (`resolve-library-id` + `query-docs`) for:
+- React, Next.js, Vue, TypeScript, Python, FastAPI, Django, Flask
+- Express, NestJS, Prisma, Drizzle, Supabase, Firebase
+- PostgreSQL, MongoDB, Redis, Docker, Kubernetes
+- Tailwind, shadcn, Vite, Playwright, Jest, Vitest
+- ANY npm package, pip package, or open-source library
+
+Protocol:
+1. `resolve-library-id(libraryName, userQuestion)` → get library ID
+2. `query-docs(libraryId, userQuestion)` → fetch live docs
+3. Answer using fetched docs. State: "Source: [library] docs (live)"
+
+## ═══════════════════════════════════════════════════
+## HOOK 3: E2E UI TESTING (Playwright + Chrome DevTools MCP)
+## ═══════════════════════════════════════════════════
+## AUTO-TRIGGER: "test UI", "click test", "console spy", "E2E", "browser"
+## BEHAVIOR: Generate Playwright tests with console spy + Chrome DevTools live inspection
+
+### Chrome DevTools MCPs (auto-wired — 2 servers)
+- `chrome-devtools`  → chrome-devtools-mcp@latest --autoConnect --channel=beta
+- `devtools-mcp`     → @chrome-devtools/mcp@latest
+
+USE for:
+- Console spy: capture console.log/error/warn from live browser
+- Network spy: monitor API calls, responses, 4xx/5xx errors
+- DOM: inspect element visibility, attributes, computed styles
+- Performance: page load, paint, memory metrics
+- Screenshot: capture browser state at any moment
+
+### Auto-Generated E2E Template (ALWAYS use this pattern)
+```typescript
+import { test, expect } from '@playwright/test'
+
+test.describe('[Feature Name]', () => {
+  const consoleLogs: string[] = []
+  const consoleErrors: string[] = []
+
+  test.beforeEach(async ({ page }) => {
+    // Wire console spy BEFORE navigation
+    page.on('console', msg => {
+      if (msg.type() === 'error') consoleErrors.push(msg.text())
+      else consoleLogs.push(`[${msg.type()}] ${msg.text()}`)
+    })
+    // Wire network spy
+    page.on('response', resp => {
+      if (resp.status() >= 400)
+        console.warn(`[NetworkError] ${resp.status()} ${resp.url()}`)
+    })
+    await page.goto('/your-url')
+    await page.waitForLoadState('networkidle')
+  })
+
+  test.afterEach(async () => {
+    // Assert no console errors automatically
+    expect(consoleErrors, `Console errors found: ${consoleErrors.join('; ')}`).toHaveLength(0)
+  })
+
+  test('should handle click', async ({ page }) => {
+    await page.locator('[data-testid="your-button"]').click()
+    await expect(page.locator('[data-testid="result"]')).toBeVisible()
+    await page.screenshot({ path: 'artifacts/after-click.png' })
+  })
+})
+```
+
+### E2E Commands
+- `/e2e`           → generate E2E tests with console+network spy
+- `/tdd`           → TDD: write tests first, then implement
+- `/verify`        → run verification loop
+- `/test-coverage` → check % coverage
+
+## ═══════════════════════════════════════════════════
+## PLANDB — TASK CONTROLLER (HARD RULE for multi-step tasks) before context window reach limit
+## ═══════════════════════════════════════════════════
+## Script: C:\AI\autoresearch\scripts\plandb.py
+## Global cmd: plandb (on PATH via plandb.bat)
+## DB: C:\AI\autoresearch\.plandb.sqlite (auto-created)
+##
+## PURPOSE: Prevent tool-loop failures shown as:
+##   This may indicate a failure in Clines thought process
+## ROOT CAUSE: Chaining 3+ tool calls without checkpoints.
+## SOLUTION: Each plandb task = exactly ONE primary tool call.
+
+STEP 1 - SESSION START (always first):
+  python C:\AI\autoresearch\scripts\plandb.py status
+  - in_progress: resume, do NOT add duplicates
+  - all done/empty: proceed to add new steps
+
+STEP 2 - DECOMPOSE upfront (ALL steps before ANY work):
+  plandb add step-1-title
+  plandb add step-2-title
+  Add ALL steps first. Never add-as-you-go.
+
+STEP 3 - CLAIM: plandb go  (do ONLY that one step)
+STEP 4 - ADVANCE: plandb done --next  (then do next step)
+STEP 5 - CONFIRM: plandb list  (all must show done)
+
+RULE A - ONE TOOL CALL PER PLANDB STEP. Need 2 calls = 2 tasks.
+RULE B - NEVER RETRY SAME TOOL 3+ TIMES. Fail = replan via plandb.
+RULE C - NEVER write_file FOR .js SCRIPTS. Use node -e inline instead.
+RULE D - NEVER CHAIN TOOLS without plandb checkpoints between them.
+RULE E - WHEN BLOCKED: plandb list BEFORE asking user.
+RULE F - NEVER ASK PERMISSION FOR PLANDB. 2+ steps = use it auto.
+RULE G - NEVER LEAVE in_progress ACROSS SESSIONS. Resume next session.
+RULE H - TOOL FAILURE WARNING = STOP, run plandb status, replan now.
+
+QUICK REF: plandb status / add / go / done --next / list
+
+## ═══════════════════════════════════════════════════
+## RULE 11 - Coding Artifacts Must Stay in Their Original Project Folder
+## WARNING: HARD RULE - NON-NEGOTIABLE - OVERRIDES ALL CONVENIENCE
+## ═══════════════════════════════════════════════════
+
+PRINCIPLE: Every artifact lives exactly where it belongs.
+VIOLATION: Work must be redone in the correct location. No exceptions.
+
+11.1 - Scratch / Compose / Temp Work -> tmp/
+  Exploratory/spike code         -> tmp/auth-spike-20260507.ts
+  Draft snippets                 -> tmp/draft-parser-20260507.py
+  One-off migration scripts      -> tmp/migrate-once-20260507.sh
+  Quick proof-of-concept         -> tmp/poc-caching-20260507.ts
+  Temp test iterations           -> tmp/feature-x-draft-20260507.test.ts
+  Experiments                    -> tmp/try-new-algo-20260507.py
+  Screenshot artifacts           -> tmp/after-click-20260507.png
+  Naming convention: tmp/<short-description>-<YYYYMMDD>.<ext>
+
+  tmp/ rules:
+  - git-ignored (already in .gitignore)
+  - NEVER imported by production code
+  - NEVER committed
+  - Safe to delete entire tmp/ at any time
+  - Research docs go in research/ or docs/ NOT tmp/
+
+11.2 - Test Files: Draft in tmp/, Promote When Stable
+  tmp/my-feature-test-20260507.test.ts  <- iterate freely
+  |  once stable + passing
+  v
+  tests/my-feature.test.ts               <- promoted, lint-clean, committed
+  Promoted tests MUST pass lint before commit.
+
+11.3 - Production / Useful Code -> Original Project Location
+  - All shipped code MUST reside in canonical project location
+  - No production logic in tmp/
+  - No stray files in project root
+  - Run lint before committing to final location
+
+11.4 - Cross-Project Contamination is Forbidden
+  - Code for project A must NEVER go into project B folder
+  - NEVER create autoresearch/ subfolders inside this project
+  - NEVER create this project subfolders inside autoresearch/
+
+11.5 - Folder Ownership Map (this project)
+  Scratch/spikes/drafts       tmp/
+  Temp test drafts            tmp/
+  Stable tests (promoted)     tests/ or src/__tests__/
+  Source code                 src/ or appropriate subdir
+  Agents                      agents/
+  Commands                    commands/
+  Hooks                       hooks/
+  Skills                      skills/
+  Documentation               docs/
+  Research outputs            research/
+  Scripts                     scripts/
+  Schema definitions          schemas/
+  Examples                    examples/
+
+11.6 - Pre-Write Checklist (run mentally before every write_file):
+  [ ] Scratch/exploratory?   -> tmp/
+  [ ] Temp test?             -> tmp/, promote when stable
+  [ ] Production code?       -> correct src/ location then lint
+  [ ] Different project?     -> write there not here
+  [ ] Being committed?       -> must pass lint first
+
+## =================================================
+## RULE 12 - OpenClaw Memory Architecture (Added 2026-05-05)
+## =================================================
+Read memory files BEFORE any work. Maintain them AFTER work.
+
+Memory layers:
+  Layer 01 Identity:   IDENTITY.md, SOUL.md, USER.md
+  Layer 02 Long-Term:  MEMORY.md
+  Layer 03 Working:    memory/YYYY-MM-DD.md (one per day, append-only)
+  Layer 04 Operations: AGENTS.md, TOOLS.md, HEARTBEAT.md
+
+SESSION START - read before any work:
+  1. Read IDENTITY.md
+  2. Read SOUL.md
+  3. Read USER.md
+  4. Read MEMORY.md
+  5. Check memory/YYYY-MM-DD.md (Asia/Shanghai date):
+     - NOT exists: CREATE it with session-start entry
+     - EXISTS: read fully then APPEND session-start note
+  6. python C:\AI\autoresearch\scripts\plandb.py status
+
+DURING WORK:
+  - Make minimal safe edits - inspect before modifying
+  - Track important decisions in memory/YYYY-MM-DD.md
+  - Use PlanDB for all multi-step tasks - no exceptions
+
+SESSION END:
+  - Append session-end summary to memory/YYYY-MM-DD.md
+  - Promote ONLY stable durable facts to MEMORY.md
+  - Mark all completed plandb tasks done
+
+Daily memory file: memory/YYYY-MM-DD.md (append-only, auto-created)
+
+## =================================================
+## RULE 13 - CF Deploy Verification (HARD RULE - NO EXCEPTIONS)
+## =================================================
+After ANY CF deployment (cf push, cf restart, cf start):
+
+MANDATORY verification pattern (replace APP_NAME with actual app):
+  Step 1: cf app APP_NAME
+           -> read instances: must show 1/1 (not 0/1)
+  Step 3: curl.exe -v https://APP_URL/health
+           -> must return HTTP 200
+
+PASS criteria: instances 1/1 AND curl returns HTTP 200
+FAIL criteria: instances 0/1 OR curl returns 4xx/5xx -> fix and redeploy
+
+HALLUCINATION TRAPS - NEVER:
+  - NEVER report web:1/1 from memory - run cf app NAME and read NEW output NOW
+  - NEVER reuse old cf app output from a previous message
+  - NEVER report HTTP 200 without curl output appearing in THIS response
+  - NEVER mark task done if cf app shows web:0/1
+  - NEVER hardcode app URLs in rules - derive from cf app output each time
+
+## =================================================
+## GENERAL CODE QUALITY (auto-enforce on every file edit)
+## =================================================
+
+- Always add data-testid to interactive UI elements (enables E2E)
+- Never commit console.log without // TODO: remove comment
+- TypeScript: strict mode always
+- Validate all inputs, never trust external data
+- Use Path(__file__).parent for CF-deployed Python asset paths
+- BTP CF: pass env vars explicitly via subprocess env dict
+
+Lint Gate (MUST pass before committing outside tmp/):
+  npm run lint   OR  eslint <file>
+  prettier --check <file>  OR  npm run format:check
+  Python: ruff check + black --check
+  Rust:   cargo clippy + cargo fmt --check
+  Zero tolerance for lint failures on committed code.
+
+Security:
+- Never hardcode secrets, API keys, tokens, credentials
+- Use environment variables for all configuration
+- SAP: use XSUAA OAuth tokens, never bypass auth
+- No magic numbers without named constants + comment
+
+Git:
+- Conventional commits: feat/fix/chore/docs/test/refactor
+- Keep commits small and focused
+- Body must explain WHY not just WHAT
+
+## =================================================
+## MCP SERVERS ACTIVE
+## =================================================
+# telemetry-knowledge  -> C:/EPM_ACCUMULATION/agent-browser/knowledge-server.js
+# mamga-memory         -> C:/AI/MAMGA/mcp_server.py (LONG-TERM MEMORY)
+# chrome-devtools      -> browser console/network spy (beta channel)
+# devtools-mcp         -> Chrome DevTools Protocol
+# obsidian-wiki        -> C:\AI\knowledge\ vault (SAP dev knowledge - 68 pages)
+
+## =================================================
+## ECC HARNESS LOADED
+## =================================================
+## Rules:    89 files in .cursor/rules/
+## Agents:   47 specialists in .cursor/agents/
+## Skills:   69 workflow playbooks in .cursor/skills/
+## Commands: 79 slash commands in .cursor/commands/
+## Hooks:    16 hook scripts in .cursor/hooks/
+
+## tmp/ POLICY SUMMARY
+## Location: <project-root>/tmp/
+## Purpose:  Scratch pad, compose area, temp tests, spikes
+## Git:      IGNORED (.gitignore line 83)
+## Lint:     NOT required (throwaway code)
+## Promote:  Stable useful code -> correct src/ location + lint
+## Clean:    Safe to delete entire tmp/ at any time
+
+## =================================================
+## CLINE RECOVERY AND RESUME RULES (Added 2026-05-08)
+## =================================================
+
+When resuming a task after an error:
+1. Do not blindly retry the failed operation.
+2. First summarize the last known goal.
+3. Identify the exact error.
+4. Continue from the last safe step.
+5. If the error is provider/model/API related, do not retry until configuration is corrected.
+6. If the error is a malformed tool call, regenerate the tool call with correct required parameters.
+7. If the same error appears twice, stop and ask the user.
+
+## =================================================
+## LITELLM RULES (Added 2026-05-08)
+## =================================================
+
+Never blindly retry LiteLLM 400 errors.
+
+A LiteLLM 400 error usually means:
+- wrong model name
+- wrong provider
+- wrong base URL
+- wrong API key
+- unsupported model
+- invalid proxy mapping
+- bad request format
+
+If a LiteLLM 400 error happens:
+1. Stop.
+2. Print the modelId and providerId.
+3. Ask the user to confirm the correct model alias.
+4. Do not retry the same modelId.
+
+## =================================================
+## EXECUTE_COMMAND APPROVAL RULES (Added 2026-05-08)
+## =================================================
+
+Every execute_command call MUST include requires_approval. Never omit it.
+
+Safe read-only commands -> requires_approval=false:
+  pwd, ls, cat, grep, find, git status,
+  python --version, node --version, npm test, pytest
+
+System-modifying commands -> requires_approval=true:
+  npm install, pip install, rm, mv, cp,
+  git reset, git clean, git push, docker,
+  database migration, chmod, chown,
+  curl pipe to shell, wget pipe to shell
