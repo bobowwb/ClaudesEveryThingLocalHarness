@@ -1,53 +1,18 @@
-#!/usr/bin/env pwsh
-# install.ps1 — Windows-native entrypoint for the ECC installer.
-#
-# This wrapper resolves the real repo/package root when invoked through a
-# symlinked path, then delegates to the Node-based installer runtime.
-
-Set-StrictMode -Version Latest
-$ErrorActionPreference = 'Stop'
-
-$scriptPath = $PSCommandPath
-
-while ($true) {
-    $item = Get-Item -LiteralPath $scriptPath -Force
-    if (-not $item.LinkType) {
-        break
-    }
-
-    $targetPath = $item.Target
-    if ($targetPath -is [array]) {
-        $targetPath = $targetPath[0]
-    }
-
-    if (-not $targetPath) {
-        break
-    }
-
-    if (-not [System.IO.Path]::IsPathRooted($targetPath)) {
-        $targetPath = Join-Path -Path $item.DirectoryName -ChildPath $targetPath
-    }
-
-    $scriptPath = [System.IO.Path]::GetFullPath($targetPath)
-}
-
-$scriptDir = Split-Path -Parent $scriptPath
-$installerScript = Join-Path -Path (Join-Path -Path $scriptDir -ChildPath 'scripts') -ChildPath 'install-apply.js'
-
-# Auto-install Node dependencies when running from a git clone
-$nodeModules = Join-Path -Path $scriptDir -ChildPath 'node_modules'
-if (-not (Test-Path -LiteralPath $nodeModules)) {
-    Write-Host '[ECC] Installing dependencies...'
-    Push-Location $scriptDir
-    try {
-        & npm install --no-audit --no-fund --loglevel=error
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "npm install failed with exit code $LASTEXITCODE"
-            exit $LASTEXITCODE
-        }
-    }
-    finally { Pop-Location }
-}
-
-& node $installerScript @args
-exit $LASTEXITCODE
+# VWH Install
+param([switch]$SkipNpm)
+$ROOT=$PSScriptRoot
+Write-Host "=== VibeWiredHarness Install ==="
+$nv=node --version 2>$null;if(-not $nv){exit 1}
+Write-Host "Node $nv"
+if(-not $SkipNpm){Set-Location $ROOT;npm install}
+$ag=Join-Path $ROOT "agents";$ags=Get-ChildItem $ag -Filter "*.md";$names=$ags|%{$_.BaseName}
+Write-Host "Wiring $($ags.Count) agents:"
+$names|%{Write-Host "  - $_"}
+$cd=Join-Path $ROOT ".codex";if(-not(Test-Path $cd)){New-Item -IT Directory $cd|Out-Null}
+Set-Content (Join-Path $cd "agents-manifest.json") (@{generated=(Get-Date -F "s");count=$ags.Count;agents=$names}|ConvertTo-Json -D 3) -E UTF8
+Write-Host "Manifest ok"
+$cfg=Join-Path $ROOT ".codex/config.toml";if(-not(Test-Path $cfg)){Write-Host "MISSING config.toml";exit 1}
+$ep=Join-Path $ROOT ".env";if(-not(Test-Path $ep)){$ex=Join-Path $ROOT ".env.example";if(Test-Path $ex){Copy-Item $ex $ep;Write-Host "Created .env - set ANTHROPIC_API_KEY"}}
+Write-Host "=== Done $($ags.Count) agents ==="
+Write-Host "Start: .\scripts\vibestart.ps1"
+Write-Host "Dashboard: http://localhost:3100"
