@@ -3,18 +3,34 @@
 > AI Agent Orchestration Harness - Wire and manage a full fleet of Claude-powered
 > agents with MCP, hooks, commands and infrastructure services.
 
-## Quick Install (PowerShell - All Agents Auto-Wired)
+## Quick Start — one line after clone
 
 ```powershell
-git clone https://github.wdf.sap.corp/i075354/VibeWiredHarness.git "C:UsersI075354\Projects\VibeWiredHarness"
-cd "C:UsersI075354\Projects\VibeWiredHarness"
-npm install
+git clone https://github.wdf.sap.corp/i075354/VibeWiredHarness.git C:\AI\VibeWiredHarness
+cd C:\AI\VibeWiredHarness
 .\install.ps1
-Copy-Item .env.example .env
-notepad .env   # set ANTHROPIC_API_KEY
-# start MAMGA first (see services/mamga.md), then:
-.\scripts\vibestart.ps1
 ```
+
+`install.ps1` does everything in one shot:
+1. `npm install` for the harness and ECC
+2. Adds `claude-l` to your user PATH (no admin needed)
+3. Installs ECC agents, skills, hooks into `~/.claude/`
+4. Runs vibestart preflight (checks MAMGA, browser-harness, etc.)
+
+Then just launch Claude:
+
+```powershell
+# from anywhere inside this repo:
+claude-l
+
+# or from the ECC subfolder directly:
+cd everything-claude-code
+claude-l
+```
+
+**First time:** edit `.env` and set `ANTHROPIC_API_KEY` (or `HYPERSPACE_PROXY_KEY` for the SAP Hyperspace proxy).
+
+**Update:** `git pull` from the repo root — updates both the harness and ECC in one pull.
 
 ## Architecture
 
@@ -80,21 +96,21 @@ notepad .env   # set ANTHROPIC_API_KEY
 ## Recommended Folder Structure
 
 ```
-C:UsersI075354\Projects\
-+-- VibeWiredHarness\       <- this repo
-|   +-- agents\             <- 44 AI agent definitions (Layer 1)
-|   +-- services\           <- 6 external service docs (Layer 2)
-|   +-- commands\           <- slash-command definitions
-|   +-- contexts\           <- dev/research/review contexts
-|   +-- hooks\              <- pre/post event hooks
-|   +-- rules\              <- guardrails and policies
+C:\AI\VibeWiredHarness\              <- this repo (clone here)
++-- claude-l.cmd                     <- launch Claude from repo root
++-- install.ps1                      <- one-line setup
++-- agents\                          <- 44 AI agent definitions (Layer 1)
++-- services\                        <- 6 external service docs (Layer 2)
++-- commands\                        <- slash-command definitions
++-- hooks\                           <- pre/post event hooks
++-- rules\                           <- guardrails and policies
++-- everything-claude-code\          <- ECC agents, skills, hooks
 |   +-- scripts\
-|   |   +-- vibestart.ps1   <- START Layer 1
-|   |   +-- vibestop.ps1    <- STOP Layer 1
-|   |   +-- vibestatus.ps1  <- STATUS both layers
-|   |   +-- mcp-server.js   <- MCP entry point
-|   +-- .codex\config.toml
-|   +-- install.ps1
+|   |   +-- claude-l.cmd             <- Claude launcher (Hyperspace proxy aware)
+|   |   +-- vibestart.ps1            <- START services
+|   |   +-- vibestop.ps1             <- STOP services
+|   +-- agents\  commands\  skills\  <- ECC content wired to ~/.claude/
++-- .codex\config.toml
 |
 C:\AI\
 +-- agent-browser\          <- Layer 2: UI test guide project
