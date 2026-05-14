@@ -23,7 +23,7 @@ notepad .env   # set ANTHROPIC_API_KEY
               | MCP protocol
               v
 +-------------------------------------------------------------+
-|  LAYER 1 - MCP Server :3100  (vibestart / vibestop)        |
+|  LAYER 1 - MCP Observer, default :3100 (vibestart/vibestop)|
 |                                                             |
 |  44 Harness Agents  (stateless, on-demand per call)        |
 |  architect | code-reviewer | planner | security-reviewer   |
@@ -60,7 +60,7 @@ notepad .env   # set ANTHROPIC_API_KEY
 | Count | 44 in agents/*.md | 6 in services/*.md |
 | State | Stateless | Stateful (MAMGA) or file/binary |
 | Lifecycle | vibestart / vibestop | Independent - manage separately |
-| Port | MCP :3100 | MAMGA :7788, others PATH/files |
+| Port | MCP observer default :3100; confirmed by `/ping` | MAMGA :7788, others PATH/files |
 
 ## Start / Stop
 
@@ -68,6 +68,7 @@ notepad .env   # set ANTHROPIC_API_KEY
 # START (ensure MAMGA is running first - Layer 2)
 .\scripts\vibestart.ps1
 .\scripts\vibestart.ps1 -Verbose   # list all agents
+# Dashboard/health URLs are printed only after /ping responds.
 
 # STOP Layer 1 only - MAMGA and Layer 2 NOT affected
 .\scripts\vibestop.ps1
@@ -122,7 +123,7 @@ claude --agent agents/code-reviewer.md "review all TypeScript in src/"
 Get-ChildItem agents\ -Filter "*.md" | Select-Object BaseName | Format-Table
 ```
 
-## Agents (44 total - Layer 1, MCP :3100)
+## Agents (44 total - Layer 1, MCP observer default :3100)
 
 | Category | Agents |
 |---|---|

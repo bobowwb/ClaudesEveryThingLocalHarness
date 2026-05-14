@@ -15,4 +15,4 @@ $cfg=Join-Path $ROOT ".codex/config.toml";if(-not(Test-Path $cfg)){Write-Host "M
 $ep=Join-Path $ROOT ".env";if(-not(Test-Path $ep)){$ex=Join-Path $ROOT ".env.example";if(Test-Path $ex){Copy-Item $ex $ep;Write-Host "Created .env - set ANTHROPIC_API_KEY"}}
 Write-Host "=== Done $($ags.Count) agents ==="
 Write-Host "Start: .\scripts\vibestart.ps1"
-Write-Host "Dashboard: http://localhost:3100"
+Write-Host "Dashboard URL is printed only after vibestart.ps1 passes /ping."

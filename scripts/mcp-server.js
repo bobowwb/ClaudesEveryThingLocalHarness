@@ -12,7 +12,7 @@ if(u==="/tools/list")return J(res,{tools:A.map(a=>({name:a.n,description:a.d}))}
 if(u==="/resources/list")return J(res,{resources:["agents/","services/","commands/","hooks/","rules/","skills/"]});
 if(u==="/prompts/list")return J(res,{prompts:C.map(n=>({name:n,invoke:"/"+n}))});
 if(u.startsWith("/agent/")){const ag=A.find(a=>a.n===u.slice(7));if(ag)return J(res,ag);res.writeHead(404,CH);res.end(JSON.stringify({error:"not found"}));return;}
-if(u==="/tools/call"&&req.method==="POST"){let b="";req.on("data",c=>b+=c);req.on("end",()=>{try{const d=JSON.parse(b||"{}}"),ag=A.find(a=>a.n===d.tool);if(!ag){res.writeHead(404,CH);res.end(JSON.stringify({error:"agent not found"}));return;}J(res,{agent:d.tool,status:"ready",description:ag.d,message:"Agent "+d.tool+" wired on MCP:"+PORT+". Connect Claude Code for AI calls.",params:d.params});}catch(e){res.writeHead(400,CH);res.end(JSON.stringify({error:e.message}));}});return;}
+if(u==="/tools/call"&&req.method==="POST"){let b="";req.on("data",c=>b+=c);req.on("end",()=>{try{const d=JSON.parse(b||"{}"),ag=A.find(a=>a.n===d.tool);if(!ag){res.writeHead(404,CH);res.end(JSON.stringify({error:"agent not found"}));return;}J(res,{agent:d.tool,status:"ready",description:ag.d,message:"Agent "+d.tool+" wired on MCP:"+PORT+". Connect Claude Code for AI calls.",params:d.params});}catch(e){res.writeHead(400,CH);res.end(JSON.stringify({error:e.message}));}});return;}
 if((u==="/"||u==="")&&(acc.includes("text/html")||acc.includes("*/*")||acc==="")){
 res.writeHead(200,Object.assign({},CH,{"Content-Type":"text/html;charset=utf-8"}));
 res.end(buildPage(A,C));
@@ -26,7 +26,6 @@ const Q=String.fromCharCode(34);
 const t=String.fromCharCode(60),g=String.fromCharCode(62);
 const e=(tag,attrs,inner)=>t+tag+(attrs?" "+attrs:"")+g+(inner||"")+t+"/"+tag+g;
 const btn=(bg,lbl,fn)=>t+"button onclick="+Q+fn+Q+" style="+Q+"background:"+bg+";color:#fff;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:monospace"+Q+g+lbl+t+"/button"+g;
-const Q=String.fromCharCode(34),t=String.fromCharCode(60),g=String.fromCharCode(62);
 const ar=A.map(a=>{
 const id="s"+a.n.replace(/[^a-z0-9]/g,"_");
 return t+"tr"+g+t+"td"+g+t+"code"+g+a.n+t+"/code"+g+t+"/td"+g

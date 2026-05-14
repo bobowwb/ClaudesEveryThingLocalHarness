@@ -4,11 +4,11 @@
 **Lifecycle:** Independent - NOT started/stopped by vibestart/vibestop
 
 ## What it does
-Persistent memory layer. Unlike the 44 stateless MCP agents on port 3100,
+Persistent memory layer. Unlike the 44 stateless MCP agents on the Layer 1 MCP observer port,
 MAMGA retains state across sessions: history, decisions, context blobs.
 
 ## How agents use it
-  agent (MCP :3100) -> memory_store/memory_recall -> MAMGA :7788
+  agent (Layer 1 MCP observer) -> memory_store/memory_recall -> MAMGA :7788
 
 ## Notes
 - Start MAMGA BEFORE vibestart.ps1
