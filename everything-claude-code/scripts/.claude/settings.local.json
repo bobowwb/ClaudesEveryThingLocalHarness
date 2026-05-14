@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell.exe *)",
+      "Bash(curl *)",
+      "Bash(cmd.exe /c \"curl -s --max-time 3 http://127.0.0.1:7788/health\")",
+      "Bash(cmd.exe *)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(node \"C:/AI/everything-claude-code\\(miss_useOHnow\\)/everything-claude-code/tests/e2e/hello-world.test.js\")",
+      "mcp__playwright__browser_navigate"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "github",
+    "context7",
+    "exa",
+    "memory",
+    "playwright",
+    "sequential-thinking"
+  ]
+}
