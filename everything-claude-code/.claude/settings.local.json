@@ -10,7 +10,8 @@
       "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" remote -v)",
       "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" status)",
       "Read(//c/AI/everything-claude-code\\(miss_useOHnow\\)/**)",
-      "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" log --oneline -5)"
+      "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" log --oneline -5)",
+      "Skill(github-ops)"
     ]
   },
   "enabledMcpjsonServers": [
