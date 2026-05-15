@@ -1,4 +1,23 @@
 {
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "***REMOVED_GITHUB_PAT***",
+    "GITHUB_HOST": "github.wdf.sap.corp"
+  },
+  "permissions": {
+    "allow": [
+      "mcp__exa__web_fetch_exa",
+      "Bash(cc-connect --version)",
+      "Bash(npm list *)",
+      "Bash(xargs grep -l -i \"joule\\|consume\\|scenario\")",
+      "Bash(xargs grep -l -i \"ltm\")",
+      "Bash(xargs grep -l -i \"joule\")",
+      "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" remote -v)",
+      "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" status)",
+      "Read(//c/AI/everything-claude-code\\(miss_useOHnow\\)/**)",
+      "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" log --oneline -5)",
+      "Skill(github-ops)"
+    ]
+  },
   "enabledMcpjsonServers": [
     "github",
     "context7",
