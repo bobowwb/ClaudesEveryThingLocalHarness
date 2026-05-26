@@ -18,6 +18,10 @@ secrets.json
 config/secrets.yml
 .secrets
 
+# Claude Code local settings (may contain tokens)
+.claude/settings.local.json
+**/.claude/settings.local.json
+
 # OS files
 .DS_Store
 .DS_Store?
