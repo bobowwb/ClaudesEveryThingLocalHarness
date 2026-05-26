@@ -9,8 +9,9 @@ for /f "tokens=2 delims=:" %%A in ('chcp 2^>nul') do set "__CLAUDE_L_OLD_CP=%%A"
 set "__CLAUDE_L_OLD_CP=%__CLAUDE_L_OLD_CP: =%"
 chcp 65001 >nul 2>nul
 
-set "ANTHROPIC_BASE_URL=http://localhost:6655/anthropic"
-set "CLAUDE_L_DEFAULT_MODEL=anthropic--claude-4.6-sonnet"
+set "ANTHROPIC_BASE_URL=http://localhost:6655/litellm/v1"
+set "CLAUDE_L_DEFAULT_MODEL=anthropic--claude-4.7-opus"
+set "CLAUDE_L_LITELLM_API_KEY=8a6ab847-a6aa-4b1e-b84f-629d2f905046"
 
 set "PYTHONUTF8=1"
 set "PYTHONIOENCODING=utf-8"
@@ -34,8 +35,12 @@ set "ANTHROPIC_AUTH_TOKEN=%HYPERSPACE_API_KEY%"
 
 :claude_l_check_api_key
 if defined ANTHROPIC_AUTH_TOKEN goto claude_l_have_auth_token
-if not defined ANTHROPIC_API_KEY goto claude_l_prompt_auth_token
+if not defined ANTHROPIC_API_KEY goto claude_l_use_litellm_default
 set "ANTHROPIC_AUTH_TOKEN=%ANTHROPIC_API_KEY%"
+goto claude_l_have_auth_token
+
+:claude_l_use_litellm_default
+set "ANTHROPIC_AUTH_TOKEN=%CLAUDE_L_LITELLM_API_KEY%"
 
 :claude_l_have_auth_token
 if defined ANTHROPIC_API_KEY goto claude_l_auth_done
@@ -51,27 +56,30 @@ if defined ANTHROPIC_MODEL goto claude_l_model_done
 
 echo.
 echo Select Claude model:
-echo   1^) anthropic--claude-4.6-sonnet ^(default^)
-echo   2^) anthropic--claude-4.5-sonnet
-echo   3^) anthropic--claude-4-sonnet
-echo   4^) anthropic--claude-4.6-opus
-echo   5^) anthropic--claude-4.5-opus
-echo   6^) anthropic--claude-4.5-haiku
-echo   7^) custom
+echo   1^) anthropic--claude-4.7-opus ^(default^)
+echo   2^) anthropic--claude-4.6-sonnet
+echo   3^) anthropic--claude-4.5-sonnet
+echo   4^) anthropic--claude-4-sonnet
+echo   5^) anthropic--claude-4.6-opus
+echo   6^) anthropic--claude-4.5-opus
+echo   7^) anthropic--claude-4.5-haiku
+echo   8^) custom
 set /p "CLAUDE_L_MODEL_CHOICE=Model [1]: "
 
-if "%CLAUDE_L_MODEL_CHOICE%"=="2" set "ANTHROPIC_MODEL=anthropic--claude-4.5-sonnet"
-if "%CLAUDE_L_MODEL_CHOICE%"=="3" set "ANTHROPIC_MODEL=anthropic--claude-4-sonnet"
-if "%CLAUDE_L_MODEL_CHOICE%"=="4" set "ANTHROPIC_MODEL=anthropic--claude-4.6-opus"
-if "%CLAUDE_L_MODEL_CHOICE%"=="5" set "ANTHROPIC_MODEL=anthropic--claude-4.5-opus"
-if "%CLAUDE_L_MODEL_CHOICE%"=="6" set "ANTHROPIC_MODEL=anthropic--claude-4.5-haiku"
-if "%CLAUDE_L_MODEL_CHOICE%"=="7" set /p "ANTHROPIC_MODEL=Custom model: "
+if "%CLAUDE_L_MODEL_CHOICE%"=="2" set "ANTHROPIC_MODEL=anthropic--claude-4.6-sonnet"
+if "%CLAUDE_L_MODEL_CHOICE%"=="3" set "ANTHROPIC_MODEL=anthropic--claude-4.5-sonnet"
+if "%CLAUDE_L_MODEL_CHOICE%"=="4" set "ANTHROPIC_MODEL=anthropic--claude-4-sonnet"
+if "%CLAUDE_L_MODEL_CHOICE%"=="5" set "ANTHROPIC_MODEL=anthropic--claude-4.6-opus"
+if "%CLAUDE_L_MODEL_CHOICE%"=="6" set "ANTHROPIC_MODEL=anthropic--claude-4.5-opus"
+if "%CLAUDE_L_MODEL_CHOICE%"=="7" set "ANTHROPIC_MODEL=anthropic--claude-4.5-haiku"
+if "%CLAUDE_L_MODEL_CHOICE%"=="8" set /p "ANTHROPIC_MODEL=Custom model: "
 if not defined ANTHROPIC_MODEL set "ANTHROPIC_MODEL=%CLAUDE_L_DEFAULT_MODEL%"
 
 :claude_l_model_done
+set "CLAUDE_MODEL=%ANTHROPIC_MODEL%"
 set "ANTHROPIC_CUSTOM_HEADERS=Authorization: Bearer %ANTHROPIC_AUTH_TOKEN%"
 
-claude --model "%ANTHROPIC_MODEL%" %*
+claude %*
 set "__CLAUDE_L_EXIT_CODE=%ERRORLEVEL%"
 
 if defined __CLAUDE_L_OLD_CP chcp %__CLAUDE_L_OLD_CP% >nul 2>nul

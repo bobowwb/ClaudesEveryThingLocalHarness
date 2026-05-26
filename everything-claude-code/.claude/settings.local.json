@@ -11,7 +11,23 @@
       "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" status)",
       "Read(//c/AI/everything-claude-code\\(miss_useOHnow\\)/**)",
       "Bash(git -C \"C:/AI/everything-claude-code\\(miss_useOHnow\\)\" log --oneline -5)",
-      "Skill(github-ops)"
+      "Skill(github-ops)",
+      "Bash(where.exe claude-l *)",
+      "Bash(git *)",
+      "Bash(where cc-connect *)",
+      "Read(//c/Users/I075354/.cc-connect/**)",
+      "Read(//c/Users/I075354/.config/**)",
+      "Bash(curl -s -X POST https://resources-q3wb9eum.authentication.sap.hana.ondemand.com/oauth/token -u 'sb-7815318f-7b00-4c33-a8e9-e64de4a2689a!b298428|xsuaa_std!b77089:ab606437-9787-46eb-834d-33499b440570$XF4aPzuJa0rwjVFI58GOAa6RjH9K7RCIFdU2KIhSN2o=' -d grant_type=client_credentials -H 'Content-Type: application/x-www-form-urlencoded' -o /tmp/aic_token.json -w 'HTTP=%{http_code}\\\\n')",
+      "Bash(curl -s -X POST https://resources-q3wb9eum.authentication.sap.hana.ondemand.com/oauth/token -u 'sb-7815318f-7b00-4c33-a8e9-e64de4a2689a!b298428|xsuaa_std!b77089:ab606437-9787-46eb-834d-33499b440570$XF4aPzuJa0rwjVFI58GOAa6RjH9K7RCIFdU2KIhSN2o=' -d grant_type=client_credentials -H 'Content-Type: application/x-www-form-urlencoded' -o aic_token.json -w 'HTTP=%{http_code}\\\\n')",
+      "Bash(curl -s -X GET 'https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com/v2/lm/deployments?$top=200' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'AI-Resource-Group: default' -o deployments.json -w 'HTTP=%{http_code}\\\\n')",
+      "Bash(curl -s -X POST https://api.ai.internalprod.eu-central-1.aws.ml.hana.ondemand.com/v2/inference/deployments/__TRACKED_VAR__/invoke -H 'Authorization: Bearer __TRACKED_VAR__' -H 'AI-Resource-Group: default' -H 'Content-Type: application/json' -d '{\"anthropic_version\":\"bedrock-2023-05-31\",\"max_tokens\":64,\"messages\":[{\"role\":\"user\",\"content\":\"Reply in one short sentence: ping.\"}]}' -o chat_resp.json -w 'HTTP=%{http_code}\\\\n')",
+      "Bash(python *)",
+      "Bash(cd *)",
+      "Bash(powershell *)",
+      "Bash(/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe *)",
+      "WebFetch(domain:localhost)",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_navigate"
     ]
   },
   "enabledMcpjsonServers": [

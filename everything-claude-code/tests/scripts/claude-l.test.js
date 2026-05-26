@@ -34,7 +34,15 @@ function runTests() {
 
   if (test('defaults model without prompting every launch', () => {
     assert.ok(source.includes('CLAUDE_L_PROMPT_MODEL'), 'Should expose opt-in prompt flag');
+    assert.ok(source.includes('CLAUDE_L_DEFAULT_MODEL=anthropic--claude-4.7-opus'), 'Should default to Claude 4.7 Opus proxy model');
     assert.ok(source.includes('set "ANTHROPIC_MODEL=%CLAUDE_L_DEFAULT_MODEL%"'), 'Should set default model automatically');
+  })) passed++; else failed++;
+
+  if (test('uses proxy token auth without API key conflict', () => {
+    assert.ok(source.includes('set "ANTHROPIC_BASE_URL=http://localhost:6655/anthropic"'), 'Should force the local proxy base URL');
+    assert.ok(source.includes('set "ANTHROPIC_API_KEY="'), 'Should clear API key before launching Claude');
+    assert.ok(!source.includes('set "ANTHROPIC_API_KEY=%ANTHROPIC_AUTH_TOKEN%"'), 'Should not export both token and API key');
+    assert.ok(source.includes('set "ANTHROPIC_CUSTOM_HEADERS=Authorization: Bearer %ANTHROPIC_AUTH_TOKEN%"'), 'Should send bearer token to proxy');
   })) passed++; else failed++;
 
   if (test('checks claude command availability before launch', () => {
